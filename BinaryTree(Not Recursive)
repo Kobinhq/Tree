@@ -1,0 +1,127 @@
+using System;
+using System.IO;
+
+
+namespace BinaryTree_nonrecursive_
+{
+    public class Tree
+    {
+
+        public static long cnt;
+        long[] tree;
+        public Tree(long num)
+        {
+            cnt = num;
+            tree = new long[cnt];
+            tree[0] = 1;
+        }
+        public void Add(long value)
+        {
+            int i = 0;
+
+            while ((i * 2) + 2 < tree.Length)
+            {
+                //switch (value < tree[i], tree[(i * 2) + 1] == 0 || tree[(i * 2) + 2] == 0)
+                //{
+                //    case (true,true):
+                //        {
+                //            tree[(i * 2) + 1] = value;
+                //            return;
+                //        }
+                //    case (true, false):
+                //        {
+                //            i = ((i * 2) + 1);
+                //            continue;
+                //        }
+
+                //    case (false, true):
+                //        {
+                //            tree[(i * 2) + 2] = value;
+                //            return;
+                //        }
+                //    case (false, false):
+                //        {
+                //            i = (i * 2) + 2;
+                //            continue;
+                //        }
+                //}
+
+                if (value < tree[i] & tree[(i * 2) + 1] == 0)
+                {
+                    tree[(i * 2) + 1] = value;
+                    return;
+                }
+                if (value < tree[i] & tree[(i * 2) + 1] != 0)
+                {
+                    i = ((i * 2) + 1);
+                    continue;
+                }
+                if (value >= tree[i] & tree[(i * 2) + 2] == 0)
+                {
+                    tree[(i * 2) + 2] = value;
+                    return;
+                }
+                if (value >= tree[i] & tree[(i * 2) + 2] != 0)
+                {
+                    i = (i * 2) + 2;
+                    continue;
+                }
+            }
+        }
+        public void Revome()
+        {
+
+        }
+        public bool Contain(long value)
+        {
+            for (int i = 0; i < tree.Length; i++)
+            {
+                if (tree[i] == value)
+                    return true;
+            }
+            return false;
+        }
+        public long Count()
+        {
+            return tree.Length;
+        }
+        public void Clear()
+        {
+            for (int i = 0; i < tree.Length; i++)
+            {
+                tree[i] = 0;
+            }
+        }
+        public void Print(Tree Tree)
+        {
+            StreamWriter fs = new StreamWriter(@"c:\Tree\binarytree.txt", true);
+            string[] lines = new string[tree.Length];
+            for (long i = 0; i < lines.Length; i++)
+            {
+                long j = lines.Length - i;
+                for (int k = 0; k < j; k++)
+                {
+                    lines[i] += "         ";
+                }
+            }
+            long currlevel = 0;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (Int64.TryParse(Convert.ToString(Math.Log2(i + 1)), out long k) == true)
+                {
+                    currlevel = currlevel + 1;
+                }
+                if (Tree.tree[i] == 0 & i != 0)
+                    lines[currlevel] += "[         ]";
+                else
+                    lines[currlevel] += Convert.ToString("[" + tree[i]) + "]        ";
+            }
+            foreach (string line in lines)
+            {
+                fs.WriteLine(line);
+            }
+            fs.Close();
+        }
+
+    }
+}
