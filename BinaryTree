@@ -1,0 +1,98 @@
+using System;
+using System.IO;
+
+namespace BinaryTree
+{
+    class Program
+    {
+        public class Node
+        {
+            long currlevel = 0;
+            long value;
+            Node left;
+            Node right;
+            string side;
+            public Node(long value,ref long cnt,string side)
+            {
+                this.side = side;
+                this.value = value;
+                cnt += 1;
+            }
+            public void Generate(Node mainroot,Node root,Random rand,ref long cnt,long num = 0)
+            {
+                string side;
+                if (cnt > 50)
+                    return;
+                if (num == 0)
+                    num = rand.Next(-100, 100);
+                if (num < root.value & root.left == null)
+                {
+                    side = "L";
+                    root.left = new Node(num,ref cnt,side);
+                    root = mainroot;
+                    root.Generate(mainroot, root, rand, ref cnt);
+                }
+                if (num < root.value & root.left != null)
+                {
+                    root = root.left;
+                    root.Generate(mainroot, root, rand, ref cnt,num);
+                }
+                if ( num >= root.value & root.right == null)
+                {
+                    side = "R";
+                    root.right = new Node(num, ref cnt, side);
+                    root = mainroot;
+                    root.Generate(mainroot, root, rand, ref cnt);
+                }
+                if (num >= root.value & root.right != null)
+                {
+                    root = root.right;
+                    root.Generate(mainroot, root, rand, ref cnt,num);
+                }
+            }
+            public void PrintTree(Node startNode,ref string[] lines,long currlevel = 0)
+            {
+                if (startNode != null)
+                {
+                    if (startNode.right != null)
+                        startNode.right.currlevel += (startNode.currlevel + 1);
+                    if (startNode.left != null)
+                        startNode.left.currlevel += (startNode.currlevel + 1);
+                    lines[startNode.currlevel] += ("(" + Convert.ToString(startNode.value) + startNode.side + ")" + "           ");
+                    long currentlevel = startNode.currlevel;
+                    //рекурсивный вызов для левой и правой веток
+                    if (startNode.left == null)
+                        lines[startNode.currlevel + 1] += "              ";
+                    PrintTree(startNode.left,ref lines, currentlevel);
+                    if (startNode.right == null)
+                        lines[startNode.currlevel + 1] += "              ";
+                    PrintTree(startNode.right,ref lines, currentlevel);
+                }
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            long cnt = 0;
+            StreamWriter fs = new StreamWriter(@"c:\Tree\binarytree.txt", true);
+            Random rand = new Random();
+            Node n1 = new Node(0,ref cnt,null);
+            n1.Generate(n1,n1,rand, ref cnt);
+            string[] lines = new string[50];
+            for (long i = 0; i < 30; i++)
+            {
+                long j = 50 - i;
+                for (int k = 0; k < j; k++)
+                {
+                        lines[i] += "         ";
+                }
+            }
+            n1.PrintTree(n1,ref lines);
+            foreach (string line in lines)
+            {
+                fs.WriteLine(line);
+            }
+            fs.Close();
+        }
+    }
+}
